@@ -242,6 +242,9 @@
       "node_modules/**"
     ],
     "afterPack": "./scripts/verify-packaged-runtime.ts",
+    "electronDownload": {
+      "mirror": "https://npmmirror.com/mirrors/electron/"
+    },
     "electronFuses": {
       "runAsNode": true
     },

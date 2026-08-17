@@ -96,3 +96,5 @@ electron-builder 打包时 `@electron/rebuild` 会把 node-pty 等原生模块�
 GitHub Actions 的 `windows-latest` runner 自带以上工具链，CI 出包无需本机安装。`.electron-cache/`（Electron 二进制缓存）与 `dsh-plugin-desktop/dist/`、`lib/` 均已被 .gitignore 排除。
 
 **node-pty Spectre patch**：node-pty 1.1.0 在 `binding.gyp` 中硬编码 `SpectreMitigation: 'Spectre'`，要求 VS 2022 的 Spectre 缓解库组件（不属于 VCTools 推荐集）。本仓库通过 `patches/node-pty@1.1.0.patch`（Yarn patch，见根 `package.json` resolutions）移除该设置，使 Electron ABI 重编在任何 Windows 主机/CI 上都能完成。
+
+**Electron 下载镜像（已固化）**：`dsh-plugin-desktop/package.json` 的 `build.electronDownload.mirror` 指向 `https://npmmirror.com/mirrors/electron/`，避免直连 GitHub 超时；本机用户环境变量 `ELECTRON_MIRROR` / `ELECTRON_BUILDER_BINARIES_MIRROR` 也已通过 `setx` 固化。CI 如需回退 GitHub 官方源，设置 `ELECTRON_MIRROR=`（空）即可覆盖。下载缓存位于 `%LOCALAPPDATA%\electron\Cache`（已有完整 zip 时跳过下载）。
