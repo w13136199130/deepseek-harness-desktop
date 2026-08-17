@@ -186,7 +186,7 @@ try {
   }
   const desktopSettings = ctx.settings.get(DESKTOP_SETTINGS_NAMESPACE)
   if (desktopSettings?.mode !== 'advanced') {
-    throw new Error('assembled Host settings are missing the advanced dsh-desktop mode')
+    throw new Error('assembled Host settings are missing the advanced deepseek-harness-desktop mode')
   }
   if (!trayItems.some(item => item.label() === 'Check for Updates…')) {
     throw new Error('assembled desktop profile is missing the update tray command')
