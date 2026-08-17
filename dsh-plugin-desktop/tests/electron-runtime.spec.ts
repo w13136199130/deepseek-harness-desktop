@@ -189,7 +189,7 @@ const spec: DesktopShellSpec = {
   minWidth: 900,
   minHeight: 640,
   url: 'http://127.0.0.1:43120/',
-  productName: 'DSH Desktop',
+  productName: 'DeepSeek Harness Desktop',
   windowTitle: 'DeepSeek Harness Desktop',
   iconPath: '/tmp/app-icon.png',
   trayIcons: {
@@ -391,7 +391,7 @@ describe('Electron compatibility runtime', () => {
 
     const labels = (electron.menuTemplates.at(-1) as Array<{ label?: string }>).map(item => item.label)
     expect(labels).toEqual([
-      'Open DSH Desktop', undefined,
+      'Open DeepSeek Harness Desktop', undefined,
       'Earlier Tool', 'Later Tool', undefined,
       'Check for Updates…', undefined,
       'Switch to Advanced Mode', undefined,
@@ -554,9 +554,9 @@ describe('Electron compatibility runtime', () => {
     expect(electron.dialog.showMessageBox).toHaveBeenCalledWith(expect.objectContaining({
       type: 'error',
       title: 'Plugin Recovery',
-      message: 'DSH Desktop could not load all plugins.',
+      message: 'DeepSeek Harness Desktop could not load all plugins.',
       detail: expect.stringContaining('dsh-vision-router'),
-      buttons: ['Open DSH Terminal', 'Restart DSH Desktop', 'Dismiss'],
+      buttons: ['Open DSH Terminal', 'Restart DeepSeek Harness Desktop', 'Dismiss'],
     }))
     const recoveryCalls = electron.dialog.showMessageBox.mock.calls as unknown as Array<[{ detail?: string }]>
     expect(recoveryCalls[0]?.[0].detail).toContain('vision_crop')
@@ -637,7 +637,7 @@ describe('Electron compatibility runtime', () => {
       latestVersion: '2.0.0',
     })
     expect(electron.dialog.showMessageBox).toHaveBeenLastCalledWith(expect.objectContaining({
-      title: 'DSH Desktop Is Up to Date',
+      title: 'DeepSeek Harness Desktop Is Up to Date',
       detail: 'Installed version: 2.0.0',
       buttons: ['OK'],
     }))
@@ -665,7 +665,7 @@ describe('Electron compatibility runtime', () => {
     })
     expect(electron.shell.openPath).toHaveBeenCalledWith('/tmp/DSH-Desktop-2.1.0-mac.dmg')
     expect(electron.dialog.showMessageBox).toHaveBeenLastCalledWith(expect.objectContaining({
-      title: 'DSH Desktop Update Downloaded',
+      title: 'DeepSeek Harness Desktop Update Downloaded',
       buttons: ['OK'],
     }))
 

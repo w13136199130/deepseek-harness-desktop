@@ -41,7 +41,7 @@ function defaultOptions(): MacReleaseVerificationOptions {
   const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
   return {
     distDir: join(packageRoot, 'dist'),
-    productName: 'DSH Desktop',
+    productName: 'DeepSeek Harness Desktop',
     listDmgs,
     makeMountPoint: () => mkdtempSync(join(tmpdir(), 'dsh-desktop-dmg-')),
     run,

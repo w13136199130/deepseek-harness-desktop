@@ -139,8 +139,8 @@ describe('published package surface', () => {
 
   it('fixes the installed application identity', () => {
     expect(manifest.version).toBe(workspaceManifest.version)
-    expect(manifest.build?.productName).toBe('DSH Desktop')
-    expect(manifest.build?.appId).toBe('com.example.dshdesktop')
+    expect(manifest.build?.productName).toBe('DeepSeek Harness Desktop')
+    expect(manifest.build?.appId).toBe('com.example.deepseek-harness-desktop')
     expect(manifest.build?.asarUnpack).toEqual([
       'package.json',
       'cordis.patch.yml',
@@ -180,7 +180,7 @@ describe('published package surface', () => {
       createDesktopShortcut: true,
       createStartMenuShortcut: true,
       differentialPackage: false,
-      shortcutName: 'DSH Desktop',
+      shortcutName: 'DeepSeek Harness Desktop',
       useZip: true,
       artifactName: 'deepseek-harness-desktop-${version}-${arch}-setup.${ext}',
     })

@@ -2,7 +2,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import type { RendererBootReport } from './renderer-boot-contract.ts'
 import type { UpdateCheckResult, UpdateRequest } from './update-checker.ts'
 
-/** Electron platforms supported by the DSH Desktop native adapter. */
+/** Electron platforms supported by the DeepSeek Harness Desktop native adapter. */
 export type DesktopPlatform = 'darwin' | 'win32' | 'linux'
 
 /** Native presentation modes selected by the desktop-shell Cordis row. */
@@ -185,7 +185,7 @@ export interface DesktopRuntime {
 
 declare module '@deepseek-ai/cordis' {
   interface Context {
-    /** Electron adapter provided by the DSH Desktop launcher. */
+    /** Electron adapter provided by the DeepSeek Harness Desktop launcher. */
     desktopRuntime: DesktopRuntime
   }
 }

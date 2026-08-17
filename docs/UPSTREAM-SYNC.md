@@ -1,6 +1,6 @@
 # 上游同步操作手册（Upstream Sync）
 
-DSH Desktop 不 fork、不修改官方源码。官方 DeepSeek Harness 更新时，本仓库需要同步**两个版本面**：
+DeepSeek Harness Desktop 不 fork、不修改官方源码。官方 DeepSeek Harness 更新时，本仓库需要同步**两个版本面**：
 
 1. **源码 commit**：`deepseek-harness/` submodule 的 gitlink + `upstream.json.commit` + `sourceVersion` —— 用于开发对齐与版本记录。
 2. **运行时 npm family**：`upstream.json.runtimePackageVersion` + `dsh-plugin-desktop/package.json` 中全部 `@deepseek-ai/dsh-*` 依赖 —— 构建与用户安装实际使用。

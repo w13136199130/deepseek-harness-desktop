@@ -27,11 +27,11 @@ describe('packaged dsh bootstrap', () => {
       DSH_DESKTOP_DEFAULT_PROFILE: 'desktop',
       KEEP: 'value',
     }
-    const argv = ['/Applications/DSH Desktop', '/app.asar/lib/desktop-cli.js', '--dump-config']
+    const argv = ['/Applications/DeepSeek Harness Desktop', '/app.asar/lib/desktop-cli.js', '--dump-config']
     const load = vi.fn(async (url: string) => {
       expect(environment).toEqual({ KEEP: 'value' })
       expect(argv).toEqual([
-        '/Applications/DSH Desktop',
+        '/Applications/DeepSeek Harness Desktop',
         '/app.asar/lib/desktop-cli.js',
         '--profile',
         'desktop',
@@ -74,12 +74,12 @@ describe('packaged dsh bootstrap', () => {
   })
 
   it('uses the physical unpacked dependency tree only inside an Electron package', () => {
-    expect(unpackedAsarPath('/Applications/DSH Desktop.app/Contents/Resources/app.asar/node_modules/pkg'))
-      .toBe('/Applications/DSH Desktop.app/Contents/Resources/app.asar.unpacked/node_modules/pkg')
-    expect(unpackedAsarPath('C:\\Program Files\\DSH Desktop\\resources\\app.asar\\node_modules\\pkg'))
-      .toBe('C:\\Program Files\\DSH Desktop\\resources\\app.asar.unpacked\\node_modules\\pkg')
-    expect(unpackedAsarPath('/Applications/DSH Desktop.app/Contents/Resources/app.asar/package.json'))
-      .toBe('/Applications/DSH Desktop.app/Contents/Resources/app.asar.unpacked/package.json')
+    expect(unpackedAsarPath('/Applications/DeepSeek Harness Desktop.app/Contents/Resources/app.asar/node_modules/pkg'))
+      .toBe('/Applications/DeepSeek Harness Desktop.app/Contents/Resources/app.asar.unpacked/node_modules/pkg')
+    expect(unpackedAsarPath('C:\\Program Files\\DeepSeek Harness Desktop\\resources\\app.asar\\node_modules\\pkg'))
+      .toBe('C:\\Program Files\\DeepSeek Harness Desktop\\resources\\app.asar.unpacked\\node_modules\\pkg')
+    expect(unpackedAsarPath('/Applications/DeepSeek Harness Desktop.app/Contents/Resources/app.asar/package.json'))
+      .toBe('/Applications/DeepSeek Harness Desktop.app/Contents/Resources/app.asar.unpacked/package.json')
     expect(unpackedAsarPath('/workspace/node_modules/pkg')).toBe('/workspace/node_modules/pkg')
     const moduleUrl = pathToFileURL(join(process.cwd(), 'app.asar', 'lib', 'desktop-cli.js')).href
     expect(packagedDependencyPath(moduleUrl, '@deepseek-ai/dsh/lib/bin.js')).toBe(join(

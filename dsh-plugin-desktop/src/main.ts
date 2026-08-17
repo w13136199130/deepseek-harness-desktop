@@ -1,4 +1,4 @@
-/** DSH Desktop executable: minimal Electron bootstrap around the Host Cordis root. */
+/** DeepSeek Harness Desktop executable: minimal Electron bootstrap around the Host Cordis root. */
 
 import { app } from 'electron'
 import type { Context } from '@deepseek-ai/cordis'
@@ -44,7 +44,7 @@ import {
 } from './windows-volume-diagnostics.ts'
 
 const BIN_NAME = 'dsh-plugin-desktop'
-const PRODUCT_NAME = 'DSH Desktop'
+const PRODUCT_NAME = 'DeepSeek Harness Desktop'
 
 /** Report profile recovery without changing startup or rollback outcomes. */
 function notifyProfileRecovery(runtime: ElectronDesktopRuntime, body: string): void {
@@ -162,7 +162,7 @@ async function start(): Promise<void> {
 
   app.on('second-instance', () => { runtime.show() })
   await app.whenReady()
-  if (process.platform === 'win32') app.setAppUserModelId('com.example.dshdesktop')
+  if (process.platform === 'win32') app.setAppUserModelId('com.example.deepseek-harness-desktop')
   if (app.isPackaged && process.cwd() === '/') process.chdir(app.getPath('home'))
   const homeDir = resolveDshHome()
   const windowsVolumeConcerns = diagnoseWindowsVolumes(process.platform, [

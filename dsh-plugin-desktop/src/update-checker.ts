@@ -1,6 +1,6 @@
 /** Headless version checks against the product update service. */
 
-/** Public endpoint returning the latest stable DSH Desktop version. */
+/** Public endpoint returning the latest stable DeepSeek Harness Desktop version. */
 // TODO(brand): replace with the product update endpoint before release.
 // Automatic checks are disabled in cordis.patch.yml until an endpoint exists.
 export const DESKTOP_VERSION_ENDPOINT = 'https://updates.example.com/dsh-desktop/version'
@@ -87,7 +87,7 @@ export function compareSemVerVersions(left: string, right: string): number | nul
 }
 
 /**
- * Check the fixed DSH Desktop version endpoint for a newer stable release.
+ * Check the fixed DeepSeek Harness Desktop version endpoint for a newer stable release.
  * @param options - installed version, caller-owned signal, and optional request adapter.
  * @returns a successful comparison, or null when any request or validation step fails.
  */

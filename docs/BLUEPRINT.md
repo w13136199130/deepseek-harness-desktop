@@ -1,11 +1,11 @@
-# DSH Desktop 实施蓝图
+# DeepSeek Harness Desktop 实施蓝图（产品名 DSH Desktop）
 
 > 结论先行：桌面端 = **Electron 宿主 + 官方 DSH 运行时（原样运行）+ 以 Cordis 插件行实现的桌面能力**。官方源码零 fork、零修改；官方更新 = 升 submodule commit + 升运行时包版本。
 
 ## 1. 架构
 
 ```
-DSH Desktop.exe（自包含：Electron + Node 运行时 + pnpm + 官方 DSH npm 包）
+DeepSeek Harness Desktop.exe（自包含：Electron + Node 运行时 + pnpm + 官方 DSH npm 包）
 └── Electron main 进程
     ├── 单实例锁
     ├── 内置 pnpm 运行时（ELECTRON_RUN_AS_NODE，Electron 充当 Node）
@@ -26,10 +26,11 @@ DSH Desktop.exe（自包含：Electron + Node 运行时 + pnpm + 官方 DSH npm 
 | --- | --- | --- |
 | 本地目录 | `dsh-desktop/` | 与官方 checkout 目录区分 |
 | GitHub 仓库名 | `deepseek-harness-desktop` | 与产品仓库命名一致（待用户确认） |
-| 产品名 | `DSH Desktop` | `build.productName` / `shortcutName` |
+| 产品显示名 | `DeepSeek Harness Desktop` | `build.productName` / `shortcutName` / 窗口与快捷方式；短名 `DSH Desktop` 用于内部称呼 |
 | npm 包名 | `dsh-plugin-desktop` | 内部保留；发布 npm 需改 `@<org>/dsh-desktop` |
 | 二进制 | `dsh-desktop` / `dsh-plugin-desktop` | package.json `bin` |
-| appId | `com.example.dshdesktop` ⚠️ 占位 | 发布前必须改为你的反向域名 |
+| 安装包 | `deepseek-harness-desktop-${version}-${arch}-setup.exe` | kebab-case 全小写，URL-safe |
+| appId | `com.example.deepseek-harness-desktop` ⚠️ 占位 | 发布前必须改为你的反向域名 |
 | 更新端点 | `updates.example.com` ⚠️ 占位 | 发布前必须自建端点或改 GitHub Releases |
 | 包管理器 | `yarn@4.18.0`（根）/ `pnpm`（submodule 内部） | 两者隔离 |
 

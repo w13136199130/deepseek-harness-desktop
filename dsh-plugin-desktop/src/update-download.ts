@@ -1,4 +1,4 @@
-/** Headless, confirmation-gated downloads for DSH Desktop installers. */
+/** Headless, confirmation-gated downloads for DeepSeek Harness Desktop installers. */
 
 import { randomUUID } from 'node:crypto'
 import { chmod, lstat, mkdir, open, rename, unlink } from 'node:fs/promises'

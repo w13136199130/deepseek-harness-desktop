@@ -25,7 +25,7 @@ function fixture(version = '2.0.0'): {
   const unpacked = join(dist, 'win-unpacked')
   mkdirSync(unpacked, { recursive: true })
   const installer = join(dist, `deepseek-harness-desktop-${version}-x64-setup.exe`)
-  const application = join(unpacked, 'DSH Desktop.exe')
+  const application = join(unpacked, 'DeepSeek Harness Desktop.exe')
   writeFileSync(installer, portableExecutable())
   writeFileSync(application, portableExecutable())
   return { root, installer, application }

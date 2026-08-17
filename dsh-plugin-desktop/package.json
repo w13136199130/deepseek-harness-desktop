@@ -1,7 +1,7 @@
 {
   "name": "dsh-plugin-desktop",
   "version": "0.1.0",
-  "description": "DSH Desktop: an Electron shell composed as a DeepSeek Harness Cordis plugin",
+  "description": "DeepSeek Harness Desktop: an Electron shell composed as a DeepSeek Harness Cordis plugin",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
@@ -231,8 +231,8 @@
     "vitest": "4.1.8"
   },
   "build": {
-    "appId": "com.example.dshdesktop",
-    "productName": "DSH Desktop",
+    "appId": "com.example.deepseek-harness-desktop",
+    "productName": "DeepSeek Harness Desktop",
     "asar": true,
     "asarUnpack": [
       "package.json",
@@ -290,7 +290,7 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "differentialPackage": false,
-      "shortcutName": "DSH Desktop",
+      "shortcutName": "DeepSeek Harness Desktop",
       "useZip": true,
       "artifactName": "deepseek-harness-desktop-${version}-${arch}-setup.${ext}"
     },

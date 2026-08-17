@@ -77,7 +77,7 @@ export function verifyWindowsInstaller(
     distDir,
     `deepseek-harness-desktop-${options.version}-x64-setup.exe`,
   )
-  const applicationPath = join(distDir, 'win-unpacked', 'DSH Desktop.exe')
+  const applicationPath = join(distDir, 'win-unpacked', 'DeepSeek Harness Desktop.exe')
 
   assertPortableExecutable(installerPath, 'Windows NSIS installer')
   assertPortableExecutable(applicationPath, 'unpacked Windows application')

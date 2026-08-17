@@ -10,8 +10,8 @@ function options(overrides: Partial<MacReleaseVerificationOptions> = {}) {
   const removeMountPoint = vi.fn()
   const value: MacReleaseVerificationOptions = {
     distDir: '/release/dist',
-    productName: 'DSH Desktop',
-    listDmgs: () => ['/release/dist/DSH Desktop-2.0.0-arm64.dmg'],
+    productName: 'DeepSeek Harness Desktop',
+    listDmgs: () => ['/release/dist/DeepSeek Harness Desktop-2.0.0-arm64.dmg'],
     makeMountPoint: () => '/private/tmp/dsh-desktop-dmg-test',
     run: (command, args) => { calls.push({ command, args: [...args] }) },
     removeMountPoint,
@@ -23,18 +23,18 @@ function options(overrides: Partial<MacReleaseVerificationOptions> = {}) {
 describe('macOS release artifact verification', () => {
   it('mounts one DMG and verifies signature, Gatekeeper, and the stapled ticket', () => {
     const harness = options()
-    const appPath = join('/private/tmp/dsh-desktop-dmg-test', 'DSH Desktop.app')
+    const appPath = join('/private/tmp/dsh-desktop-dmg-test', 'DeepSeek Harness Desktop.app')
 
     expect(verifyMacRelease(harness.value)).toEqual({
       appPath,
-      dmgPath: '/release/dist/DSH Desktop-2.0.0-arm64.dmg',
+      dmgPath: '/release/dist/DeepSeek Harness Desktop-2.0.0-arm64.dmg',
     })
 
     expect(harness.calls).toEqual([
       {
         command: 'hdiutil',
         args: [
-          'attach', '/release/dist/DSH Desktop-2.0.0-arm64.dmg',
+          'attach', '/release/dist/DeepSeek Harness Desktop-2.0.0-arm64.dmg',
           '-mountpoint', '/private/tmp/dsh-desktop-dmg-test', '-nobrowse', '-readonly',
         ],
       },

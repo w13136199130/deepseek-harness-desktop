@@ -71,7 +71,7 @@ function bootstrap(root = '/desktop runtime'): DesktopPnpmBootstrap {
     activeProfileName: '工作 profile',
     activeProfileDir: join(root, 'profiles', '工作 profile'),
     homeDir: join(root, 'harness home'),
-    appExecutable: join(root, 'DSH Desktop'),
+    appExecutable: join(root, 'DeepSeek Harness Desktop'),
     pnpmBinPath: join(root, 'node_modules', 'pnpm', 'bin', 'pnpm.mjs'),
     electronVersion: '43.4.0',
     nodeBinDir: join(root, 'private', 'node-bin'),

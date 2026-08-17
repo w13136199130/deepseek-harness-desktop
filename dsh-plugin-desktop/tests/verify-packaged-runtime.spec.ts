@@ -18,7 +18,7 @@ function context(appOutDir: string, electronPlatformName: string): PackagedRunti
   return {
     appOutDir,
     electronPlatformName,
-    packager: { appInfo: { productFilename: 'DSH Desktop' } },
+    packager: { appInfo: { productFilename: 'DeepSeek Harness Desktop' } },
   }
 }
 
@@ -34,7 +34,7 @@ describe('packaged desktop runtime verification', () => {
   it.each([
     [
       'darwin',
-      join('/build', 'DSH Desktop.app', 'Contents', 'Resources', 'app.asar'),
+      join('/build', 'DeepSeek Harness Desktop.app', 'Contents', 'Resources', 'app.asar'),
     ],
     [
       'win32',

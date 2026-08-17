@@ -1,6 +1,6 @@
 # AGENTS.md
 
-本仓库是 DSH Desktop 产品工作区（wrapper repo）：所有桌面代码位于 `dsh-plugin-desktop/`，官方 DeepSeek Harness 源码以只读 submodule 形式固定在 `deepseek-harness/`。
+本仓库是 DeepSeek Harness Desktop（DSH Desktop）产品工作区（wrapper repo）：所有桌面代码位于 `dsh-plugin-desktop/`，官方 DeepSeek Harness 源码以只读 submodule 形式固定在 `deepseek-harness/`。
 
 ## 红线
 
