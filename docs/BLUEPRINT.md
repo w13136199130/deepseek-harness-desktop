@@ -84,3 +84,13 @@ dsh-desktop/
 - [ ] npm 包名与发布策略（如需发布 npm）
 - [ ] Windows 代码签名证书（`CSC_*` 环境变量），消除 SmartScreen 提示
 - [ ] GitHub Actions Windows runner 构建 CI
+
+## 7. Windows 本机构建前置条件
+
+electron-builder 打包时 `@electron/rebuild` 会把 node-pty 等原生模块按 **Electron ABI** 从源码重编，因此本机出包需要：
+
+1. **Python**（node-gyp 依赖）：`winget install Python.Python.3.12 --scope user`
+2. **Visual Studio 2022 Build Tools**（VC++ 工作负载，node-gyp 编译 C++ 依赖）：
+   `winget install Microsoft.VisualStudio.2022.BuildTools -e --override "--quiet --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"`
+
+GitHub Actions 的 `windows-latest` runner 自带以上工具链，CI 出包无需本机安装。`.electron-cache/`（Electron 二进制缓存）与 `dsh-plugin-desktop/dist/`、`lib/` 均已被 .gitignore 排除。
