@@ -75,7 +75,7 @@ export function verifyWindowsInstaller(
   const distDir = join(options.desktopRoot, 'dist')
   const installerPath = join(
     distDir,
-    `DSH-Desktop-${options.version}-x64-Setup.exe`,
+    `deepseek-harness-desktop-${options.version}-x64-setup.exe`,
   )
   const applicationPath = join(distDir, 'win-unpacked', 'DSH Desktop.exe')
 

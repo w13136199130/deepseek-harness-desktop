@@ -13,4 +13,5 @@ node_modules/
 .electron-cache/
 
 dsh-plugin-desktop/dist/
+dsh-plugin-desktop/dist-old/
 dsh-plugin-desktop/lib/

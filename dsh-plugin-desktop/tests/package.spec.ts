@@ -182,7 +182,7 @@ describe('published package surface', () => {
       differentialPackage: false,
       shortcutName: 'DSH Desktop',
       useZip: true,
-      artifactName: 'DSH-Desktop-${version}-${arch}-Setup.${ext}',
+      artifactName: 'deepseek-harness-desktop-${version}-${arch}-setup.${ext}',
     })
     expect(manifest.build?.linux?.icon).toBe('build/app-icon.png')
   })
