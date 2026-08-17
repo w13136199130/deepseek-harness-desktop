@@ -1,0 +1,56 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    name: Windows x64 NSIS installer
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: yarn
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+      - name: Build and package Windows installer
+        run: corepack yarn dist:win
+      - name: Upload installer to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: deepseek-harness-desktop/dist/deepseek-harness-desktop-*-x64-setup.exe
+          fail_on_unmatched_files: true
+
+  macos:
+    name: macOS application (unsigned)
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: yarn
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+      - name: Build unpacked macOS application
+        run: corepack yarn workspace deepseek-harness-desktop package:dir
+      - name: Archive the application bundle
+        run: |
+          cd deepseek-harness-desktop/dist
+          ditto -c -k --sequesterRsrc --keepParent "mac/DeepSeek Harness Desktop.app" "deepseek-harness-desktop-mac-x64-unsigned.zip"
+      - name: Upload macOS application to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: deepseek-harness-desktop/dist/deepseek-harness-desktop-mac-x64-unsigned.zip
+          fail_on_unmatched_files: true
