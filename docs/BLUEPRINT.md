@@ -94,3 +94,5 @@ electron-builder 打包时 `@electron/rebuild` 会把 node-pty 等原生模块�
    `winget install Microsoft.VisualStudio.2022.BuildTools -e --override "--quiet --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"`
 
 GitHub Actions 的 `windows-latest` runner 自带以上工具链，CI 出包无需本机安装。`.electron-cache/`（Electron 二进制缓存）与 `dsh-plugin-desktop/dist/`、`lib/` 均已被 .gitignore 排除。
+
+**node-pty Spectre patch**：node-pty 1.1.0 在 `binding.gyp` 中硬编码 `SpectreMitigation: 'Spectre'`，要求 VS 2022 的 Spectre 缓解库组件（不属于 VCTools 推荐集）。本仓库通过 `patches/node-pty@1.1.0.patch`（Yarn patch，见根 `package.json` resolutions）移除该设置，使 Electron ABI 重编在任何 Windows 主机/CI 上都能完成。
