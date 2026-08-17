@@ -65,8 +65,15 @@ const PRODUCT_VERSION = desktopProductVersion()
 /** Native adapter used by the DeepSeek Harness Desktop launcher and owned by its Cordis shell plugin. */
 export class ElectronDesktopRuntime implements DesktopRuntime {
   readonly platform: DesktopPlatform
-  /** Localized tray menu labels resolved from the native application locale. */
-  readonly labels: TrayLabels
+  /**
+   * Localized tray menu labels resolved lazily from the native application
+   * locale. `app.getLocale()` is only authoritative after `app.whenReady()`,
+   * so labels must not be frozen in the constructor (which runs before ready);
+   * each access re-reads the locale, and the tray menu is rebuilt per render.
+   */
+  get labels(): TrayLabels {
+    return trayLabels(app.getLocale())
+  }
   readonly updates: DesktopUpdateAdapter = {
     get isPackaged() { return app.isPackaged },
     get canDownload() { return app.isPackaged && (process.platform === 'darwin' || process.platform === 'win32') },
@@ -97,7 +104,6 @@ export class ElectronDesktopRuntime implements DesktopRuntime {
       throw new Error(`deepseek-harness-desktop: unsupported Electron platform ${process.platform}`)
     }
     this.platform = process.platform
-    this.labels = trayLabels(app.getLocale())
   }
 
   /** @inheritdoc */

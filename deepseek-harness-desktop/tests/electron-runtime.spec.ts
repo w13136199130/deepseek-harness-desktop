@@ -418,6 +418,25 @@ describe('Electron compatibility runtime', () => {
     update.dispose()
   })
 
+  it('resolves tray labels from the locale at access time, not constructor time', async () => {
+    vi.spyOn(process, 'platform', 'get').mockReturnValue('darwin')
+    // Simulate the launcher constructing the runtime before app.whenReady():
+    // the locale is still the English default at construction.
+    electron.app.getLocale.mockReturnValue('en-US')
+    const { ElectronDesktopRuntime } = await import('../src/electron-runtime.ts')
+    const runtime = new ElectronDesktopRuntime(async () => {})
+
+    expect(runtime.labels.openTerminal).toBe('Open DSH Terminal')
+    expect(runtime.labels.quit).toBe('Quit')
+
+    // The real system locale is only authoritative after ready; the same
+    // runtime instance must re-resolve labels from the updated locale.
+    electron.app.getLocale.mockReturnValue('zh-CN')
+    expect(runtime.labels.openTerminal).toBe('打开 DSH 终端')
+    expect(runtime.labels.quit).toBe('退出')
+    expect(runtime.labels.checkForUpdates).toBe('检查更新…')
+  })
+
   it('rebuilds ordered effect-scoped tray contributions without replacing native commands', async () => {
     vi.spyOn(process, 'platform', 'get').mockReturnValue('darwin')
     const { ElectronDesktopRuntime } = await import('../src/electron-runtime.ts')
