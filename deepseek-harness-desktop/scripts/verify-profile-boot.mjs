@@ -68,6 +68,18 @@ try {
   releasePackageResolver = installProfilePackageResolver(prepared.bareModuleBaseUrl)
   const runtime = {
     platform: 'win32',
+    labels: {
+      open: productName => `Open ${productName}`,
+      openTerminal: 'Open DSH Terminal',
+      profile: name => `Profile: ${name}`,
+      unavailableForDesktop: name => `${name} (Unavailable for Desktop)`,
+      checkForUpdates: 'Check for Updates…',
+      checkingForUpdates: 'Checking for Updates…',
+      updateAvailable: version => `DeepSeek Harness Desktop ${version} Available`,
+      downloading: version => `Downloading DeepSeek Harness Desktop ${version}…`,
+      switchMode: mode => mode === 'compatibility' ? 'Switch to Advanced Mode' : 'Switch to Compatibility Mode',
+      quit: 'Quit',
+    },
     updates: {
       isPackaged: false,
       canDownload: true,

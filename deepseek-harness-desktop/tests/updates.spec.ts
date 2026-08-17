@@ -9,6 +9,7 @@ import type {
   DesktopTrayItem,
 } from '../src/runtime.ts'
 import type { UpdateCheckResult } from '../src/update-checker.ts'
+import { trayLabels } from '../src/tray-labels.ts'
 import { apply, Config, inject, type Config as UpdateConfig } from '../src/updates.ts'
 
 const testConfig: UpdateConfig = {
@@ -36,6 +37,7 @@ interface Harness {
 }
 
 async function createHarness(options: {
+  readonly locale?: string
   readonly packaged?: boolean
   readonly canDownload?: boolean
   readonly config?: UpdateConfig
@@ -62,6 +64,7 @@ async function createHarness(options: {
   let tray: DesktopTrayItem | undefined
   let disposer: (() => void | Promise<void>) | undefined
   const runtime = {
+    labels: trayLabels(options.locale ?? 'en-US'),
     updates: {
       isPackaged: options.packaged ?? true,
       currentVersion: '2.0.0',
@@ -433,5 +436,21 @@ describe('desktop update Host plugin', () => {
     expect(harness.notifications).toEqual([])
     expect(harness.warnings).toEqual([])
     expect(harness.tray.label()).toBe('Check for Updates…')
+  })
+
+  it('localizes the update tray labels for a Chinese application locale', async () => {
+    vi.useFakeTimers()
+    const harness = await createHarness({
+      locale: 'zh-CN',
+      request: async () => versionResponse('2.1.0'),
+    })
+    expect(harness.tray.label()).toBe('检查更新…')
+
+    const checking = harness.tray.invoke()
+    expect(harness.tray.label()).toBe('正在检查更新…')
+    await vi.advanceTimersByTimeAsync(testConfig.requestTimeoutMs)
+    await checking
+
+    expect(harness.tray.label()).toBe('DeepSeek Harness Desktop 2.1.0 可用更新')
   })
 })

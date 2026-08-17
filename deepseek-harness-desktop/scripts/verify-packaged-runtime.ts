@@ -90,6 +90,7 @@ export const REQUIRED_UNPACKED_PACKAGE_SPECIFIERS = [
   'deepseek-harness-desktop/profiles',
   'deepseek-harness-desktop/updates',
   'deepseek-harness-desktop/windows-pwsh-sandbox',
+  'deepseek-harness-desktop/directory-picker-browse',
   'deepseek-harness-desktop/package.json',
   '@deepseek-ai/dsh-base/package.json',
   '@deepseek-ai/dsh-web-app/package.json',

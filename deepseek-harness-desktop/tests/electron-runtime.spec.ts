@@ -131,6 +131,7 @@ const electron = vi.hoisted(() => {
   return {
     app: {
       dock: { setIcon: vi.fn() },
+      getLocale: vi.fn(() => 'en-US'),
       getPath: vi.fn(() => '/tmp/dsh-desktop-user-data'),
       getVersion: vi.fn(() => '43.4.0'),
       isPackaged: false,
@@ -204,6 +205,7 @@ const spec: DesktopShellSpec = {
 describe('Electron compatibility runtime', () => {
   beforeEach(() => {
     electron.app.isPackaged = false
+    electron.app.getLocale.mockReturnValue('en-US')
     electron.browserWindowOptions.length = 0
     electron.browserWindowThemeSources.length = 0
     electron.browserWindows.length = 0
@@ -359,6 +361,61 @@ describe('Electron compatibility runtime', () => {
     await vi.waitFor(() => { expect(requestModeChange).toHaveBeenCalledWith('advanced') })
 
     await release()
+  })
+
+  it('localizes the native tray commands for a Chinese application locale', async () => {
+    vi.spyOn(process, 'platform', 'get').mockReturnValue('darwin')
+    electron.app.getLocale.mockReturnValue('zh-CN')
+    const { ElectronDesktopRuntime } = await import('../src/electron-runtime.ts')
+    const runtime = new ElectronDesktopRuntime(async () => {})
+    const labels = runtime.labels
+    const terminal = runtime.registerTrayItem({
+      group: 'tools',
+      order: 10,
+      label: () => labels.openTerminal,
+      invoke: vi.fn(),
+    })
+    const profile = runtime.registerTrayItem({
+      group: 'profiles',
+      order: 10,
+      label: () => labels.profile('desktop'),
+      invoke: () => {},
+      submenu: () => [{
+        label: () => 'desktop',
+        type: 'radio',
+        checked: () => true,
+        enabled: () => true,
+        invoke: () => {},
+      }],
+    })
+    const update = runtime.registerTrayItem({
+      group: 'status',
+      order: 10,
+      label: () => labels.checkForUpdates,
+      invoke: vi.fn(),
+    })
+    const release = runtime.schedule(spec)
+
+    await runtime.mountScheduled()
+
+    const rendered = (electron.menuTemplates.at(-1) as Array<{ label?: string }>).map(item => item.label)
+    expect(rendered).toEqual([
+      '打开 DeepSeek Harness Desktop', undefined,
+      '打开 DSH 终端', undefined,
+      '配置文件：desktop', undefined,
+      '检查更新…', undefined,
+      '切换到高级模式', undefined,
+      '退出',
+    ])
+    expect(runtime.labels.switchMode('advanced')).toBe('切换到兼容模式')
+    expect(runtime.labels.updateAvailable('2.1.0')).toBe('DeepSeek Harness Desktop 2.1.0 可用更新')
+    expect(runtime.labels.downloading('2.1.0')).toBe('正在下载 DeepSeek Harness Desktop 2.1.0…')
+    expect(runtime.labels.unavailableForDesktop('headless')).toBe('headless（桌面不可用）')
+
+    await release()
+    terminal.dispose()
+    profile.dispose()
+    update.dispose()
   })
 
   it('rebuilds ordered effect-scoped tray contributions without replacing native commands', async () => {

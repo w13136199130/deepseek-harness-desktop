@@ -33,6 +33,8 @@ DeepSeek Harness Desktop.exe（自包含：Electron + Node 运行时 + pnpm + �
 | 安装包 | `deepseek-harness-desktop-${version}-${arch}-setup.exe` | kebab-case 全小写，URL-safe |
 | appId | `com.example.deepseek-harness-desktop` ⚠️ 占位 | 发布前必须改为你的反向域名 |
 | 更新端点 | `updates.example.com` ⚠️ 占位 | 发布前必须自建端点或改 GitHub Releases |
+| 托盘菜单语言 | 跟随系统（`app.getLocale()`） | `src/tray-labels.ts`；中文系统显示中文，其他显示英文 |
+| 应用图标 | 品牌蓝（由 `tray-icon.svg` 派生） | `build/app-icon.png`（Windows/Linux）与 `build/app-icon-mac.png`（macOS）与托盘同源同色 |
 | 包管理器 | `yarn@4.18.0`（根）/ `pnpm`（submodule 内部） | 两者隔离 |
 
 ## 3. 包与依赖
@@ -60,10 +62,11 @@ dsh-desktop/                    本地 checkout 目录（可任意命名）
     │   ├── runtime.ts          desktop-shell：窗口/托盘/service contract
     │   ├── desktop-runtime-environment.ts   内置 pnpm / dsh 命令 shim
     │   ├── desktop-terminal.ts / pnpm.ts / profiles.ts / updates.ts
+    │   ├── directory-picker-browse.ts   Windows browse 后端（根视图枚举盘符）
     │   ├── windows-pwsh-sandbox.ts / windows-acl-runner.ts / windows-volume-diagnostics.ts
     │   └── client/             advanced 模式 Client 插件（当前未启用）
     ├── cordis.patch.yml        桌面行注入（updates 默认禁用，等更新端点）
-    ├── build/                  应用/托盘图标（沿用参考图标，待替换）
+    ├── build/                  应用/托盘图标（统一品牌蓝，由 tray-icon.svg 派生）
     ├── scripts/                打包与验证脚本（package-win.ts 等）
     ├── tests/                  单测与打包验证
     └── package.json            build.appId 等打包配置
@@ -82,10 +85,10 @@ dsh-desktop/                    本地 checkout 目录（可任意命名）
 
 - [ ] appId 改为自有反向域名（`package.json` build.appId + `src/main.ts` setAppUserModelId）
 - [ ] 更新/下载端点（`update-checker.ts` / `update-download.ts`）并启用 `desktop-updates`
-- [ ] 应用图标与托盘图标替换（`build/`）
+- [x] 应用图标与托盘图标统一为品牌蓝（`build/`，均由 `tray-icon.svg` 派生；如需正式设计稿可再次替换）
 - [ ] npm 包名与发布策略（如需发布 npm）
 - [ ] Windows 代码签名证书（`CSC_*` 环境变量），消除 SmartScreen 提示
-- [ ] GitHub Actions Windows runner 构建 CI
+- [x] GitHub Actions Release 工作流（`.github/workflows/release.yml`：打 `v*` 标签触发，Windows NSIS 与 macOS 未签名 .app 上传；macOS 签名 DMG 需配置 `CSC_*` / `APPLE_*` 凭据后单独跑 `dist:mac`）
 
 ## 7. Windows 本机构建前置条件
 

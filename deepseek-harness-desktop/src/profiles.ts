@@ -4,6 +4,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import type { DesktopProfileSummary } from './profile-manager.ts'
 import type {} from './profile-service.ts'
 import type {} from './runtime.ts'
+import type { TrayLabels } from './tray-labels.ts'
 
 /** Stable Cordis plugin name. */
 export const name = 'desktop-profiles'
@@ -17,20 +18,23 @@ function selectable(profile: DesktopProfileSummary): boolean {
 }
 
 /** Render unavailable profiles without exposing manifest diagnostics in native menus. */
-function profileLabel(profile: DesktopProfileSummary): string {
-  return selectable(profile) ? profile.name : `${profile.name} (Unavailable for Desktop)`
+function profileLabel(labels: TrayLabels, profile: DesktopProfileSummary): string {
+  return selectable(profile)
+    ? profile.name
+    : labels.unavailableForDesktop(profile.name)
 }
 
 /** Register the current profile and restart-safe switch commands in the native tray. */
 export function apply(ctx: Context): void {
   ctx.effect(() => {
+    const labels = ctx.desktopRuntime.labels
     const registration = ctx.desktopRuntime.registerTrayItem({
       group: 'profiles',
       order: 10,
-      label: () => `Profile: ${ctx.desktopProfiles.current.name}`,
+      label: () => labels.profile(ctx.desktopProfiles.current.name),
       invoke: () => {},
       submenu: () => ctx.desktopProfiles.list().map(profile => ({
-        label: () => profileLabel(profile),
+        label: () => profileLabel(labels, profile),
         type: 'radio',
         checked: () => profile.name === ctx.desktopProfiles.current.name,
         enabled: () => selectable(profile),

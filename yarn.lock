@@ -2059,7 +2059,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@deepseek-ai/dsh-host-directory-picker@npm:^0.1.0-rc.6":
+"@deepseek-ai/dsh-host-directory-picker@npm:0.1.0-rc.6, @deepseek-ai/dsh-host-directory-picker@npm:^0.1.0-rc.6":
   version: 0.1.0-rc.6
   resolution: "@deepseek-ai/dsh-host-directory-picker@npm:0.1.0-rc.6"
   peerDependencies:
@@ -6560,6 +6560,7 @@ __metadata:
     "@deepseek-ai/dsh-fs-local": "npm:0.1.0-rc.6"
     "@deepseek-ai/dsh-goal": "npm:0.1.0-rc.6"
     "@deepseek-ai/dsh-home-paths": "npm:0.1.0-rc.6"
+    "@deepseek-ai/dsh-host-directory-picker": "npm:0.1.0-rc.6"
     "@deepseek-ai/dsh-host-directory-picker-browse": "npm:0.1.0-rc.6"
     "@deepseek-ai/dsh-host-directory-picker-native": "npm:0.1.0-rc.6"
     "@deepseek-ai/dsh-host-plugin-inventory": "npm:0.1.0-rc.6"

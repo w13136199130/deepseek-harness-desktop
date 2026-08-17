@@ -21,7 +21,7 @@ export function apply(ctx: Context): void {
     const registration = ctx.desktopRuntime.registerTrayItem({
       group: 'tools',
       order: 10,
-      label: () => 'Open DSH Terminal',
+      label: () => ctx.desktopRuntime.labels.openTerminal,
       invoke: () => { ctx.desktopRuntime.openTerminal() },
     })
     return () => { registration.dispose() }

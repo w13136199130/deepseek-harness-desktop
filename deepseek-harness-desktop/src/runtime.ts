@@ -1,5 +1,6 @@
 import type { Context } from '@deepseek-ai/cordis'
 import type { RendererBootReport } from './renderer-boot-contract.ts'
+import type { TrayLabels } from './tray-labels.ts'
 import type { UpdateCheckResult, UpdateRequest } from './update-checker.ts'
 
 /** Electron platforms supported by the DeepSeek Harness Desktop native adapter. */
@@ -138,6 +139,9 @@ export interface DesktopShellSpec extends DesktopWindowConfig {
 export interface DesktopRuntime {
   /** Current Electron platform. */
   readonly platform: DesktopPlatform
+
+  /** Localized native tray menu labels. */
+  readonly labels: TrayLabels
 
   /** Native network, update-download, and notification adapter. */
   readonly updates: DesktopUpdateAdapter

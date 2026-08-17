@@ -4,8 +4,13 @@ import { fileURLToPath } from 'node:url'
 import { existsSync } from 'node:fs'
 import { win32 } from 'node:path'
 import type { ShellExecSpec, ShellProcess, ShellRunResult } from '@deepseek-ai/dsh-shell'
+import { SandboxUnavailableError } from '@deepseek-ai/dsh-sandbox'
 import { SandboxPwshExecutor } from '@deepseek-ai/dsh-pwsh-sandbox'
 import type { Config as PwshConfig } from '@deepseek-ai/dsh-pwsh-local'
+import {
+  diagnoseWindowsVolumes,
+  formatWindowsVolumeConcern,
+} from './windows-volume-diagnostics.ts'
 
 const RUN_AS_NODE = 'ELECTRON_RUN_AS_NODE'
 const UPSTREAM_RUNNER = fileURLToPath(import.meta.resolve('@deepseek-ai/dsh-sandbox-windows-acl/runner'))
@@ -92,6 +97,37 @@ export function adaptWindowsAclExecution(
   }
 }
 
+/**
+ * Append an actionable volume cause to a Windows ACL sandbox failure when the
+ * command's working directory sits on a volume that cannot support the
+ * runner's NTFS-style ACL and junction operations. The runner is fail-closed
+ * by design (no unrestricted fallback), so the added detail is the only
+ * diagnostic the command sees.
+ * @param error - the upstream sandbox-unavailable failure.
+ * @param workdir - the command working directory whose volume is suspected.
+ * @returns the original error when no volume concern applies, otherwise a new
+ * error carrying the concern text.
+ */
+export function enhanceSandboxUnavailableWithVolumeDiagnosis(
+  error: SandboxUnavailableError,
+  workdir: string,
+): Error {
+  const concerns = diagnoseWindowsVolumes(process.platform, [
+    { label: 'command working directory', path: workdir },
+  ])
+  if (concerns.length === 0) return error
+  const detail = concerns.map(formatWindowsVolumeConcern).join('; ')
+  // Rebuild with the volume cause appended to the runner-failure detail so
+  // the operator sees the placement problem, not only the fail-closed
+  // signature. The mode is not exposed on the error; 'read-only' is the
+  // confining label the message template requires (the original detail is
+  // preserved verbatim inside the new detail).
+  const runnerFailure = error.message.includes('Runner failure: ')
+    ? error.message.slice(error.message.indexOf('Runner failure: ') + 'Runner failure: '.length)
+    : error.message
+  return new SandboxUnavailableError('read-only', `${runnerFailure} ${detail}`)
+}
+
 /** PowerShell sandbox provider that repairs only Electron-hosted Windows ACL launches. */
 export class DesktopWindowsPwshSandbox extends SandboxPwshExecutor {
   constructor(ctx: ConstructorParameters<typeof SandboxPwshExecutor>[0], config: PwshConfig) {
@@ -110,12 +146,26 @@ export class DesktopWindowsPwshSandbox extends SandboxPwshExecutor {
 
   protected override async runArgv(spec: ShellExecSpec, argv: readonly string[]): Promise<ShellRunResult> {
     const adapted = this.adapt(spec, argv)
-    return super.runArgv(adapted.spec, adapted.argv)
+    try {
+      return await super.runArgv(adapted.spec, adapted.argv)
+    } catch (error) {
+      if (error instanceof SandboxUnavailableError) {
+        throw enhanceSandboxUnavailableWithVolumeDiagnosis(error, spec.workdir)
+      }
+      throw error
+    }
   }
 
   protected override startArgv(spec: ShellExecSpec, argv: readonly string[]): ShellProcess {
     const adapted = this.adapt(spec, argv)
-    return super.startArgv(adapted.spec, adapted.argv)
+    try {
+      return super.startArgv(adapted.spec, adapted.argv)
+    } catch (error) {
+      if (error instanceof SandboxUnavailableError) {
+        throw enhanceSandboxUnavailableWithVolumeDiagnosis(error, spec.workdir)
+      }
+      throw error
+    }
   }
 }
 

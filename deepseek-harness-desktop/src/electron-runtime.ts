@@ -32,6 +32,7 @@ import type {
 } from './runtime.ts'
 import type { RendererBootReport } from './renderer-boot-contract.ts'
 import { prepareTrayIcon } from './tray-icons.ts'
+import { trayLabels, type TrayLabels } from './tray-labels.ts'
 import { downloadDesktopUpdate } from './update-download.ts'
 import type { UpdateCheckResult } from './update-checker.ts'
 import { desktopWindowOptions } from './window-options.ts'
@@ -42,10 +43,8 @@ export function nextDesktopShellMode(mode: DesktopShellSpec['mode']): DesktopShe
 }
 
 /** Return the tray command describing the mode that will be activated. */
-export function modeToggleLabel(mode: DesktopShellSpec['mode']): string {
-  return mode === 'compatibility'
-    ? 'Switch to Advanced Mode'
-    : 'Switch to Compatibility Mode'
+export function modeToggleLabel(mode: DesktopShellSpec['mode'], locale: string = 'en'): string {
+  return trayLabels(locale).switchMode(mode)
 }
 
 /**
@@ -66,6 +65,8 @@ const PRODUCT_VERSION = desktopProductVersion()
 /** Native adapter used by the DeepSeek Harness Desktop launcher and owned by its Cordis shell plugin. */
 export class ElectronDesktopRuntime implements DesktopRuntime {
   readonly platform: DesktopPlatform
+  /** Localized tray menu labels resolved from the native application locale. */
+  readonly labels: TrayLabels
   readonly updates: DesktopUpdateAdapter = {
     get isPackaged() { return app.isPackaged },
     get canDownload() { return app.isPackaged && (process.platform === 'darwin' || process.platform === 'win32') },
@@ -96,6 +97,7 @@ export class ElectronDesktopRuntime implements DesktopRuntime {
       throw new Error(`deepseek-harness-desktop: unsupported Electron platform ${process.platform}`)
     }
     this.platform = process.platform
+    this.labels = trayLabels(app.getLocale())
   }
 
   /** @inheritdoc */
@@ -456,7 +458,7 @@ export class ElectronDesktopRuntime implements DesktopRuntime {
     const profiles = this.contributedTrayItems('profiles')
     const status = this.contributedTrayItems('status')
     const template: Electron.MenuItemConstructorOptions[] = [
-      { label: `Open ${spec.productName}`, click: show },
+      { label: this.labels.open(spec.productName), click: show },
     ]
     if (tools.length > 0) template.push({ type: 'separator' }, ...tools)
     if (profiles.length > 0) template.push({ type: 'separator' }, ...profiles)
@@ -464,7 +466,7 @@ export class ElectronDesktopRuntime implements DesktopRuntime {
     template.push(
       { type: 'separator' },
       {
-        label: modeToggleLabel(spec.mode),
+        label: this.labels.switchMode(spec.mode),
         enabled: this.platform !== 'linux',
         click: () => {
           void spec.requestModeChange(nextDesktopShellMode(spec.mode)).catch((cause: unknown) => {
@@ -473,7 +475,7 @@ export class ElectronDesktopRuntime implements DesktopRuntime {
         },
       },
       { type: 'separator' },
-      { label: 'Quit', click: () => { spec.requestQuit(0) } },
+      { label: this.labels.quit, click: () => { spec.requestQuit(0) } },
     )
     tray.setContextMenu(Menu.buildFromTemplate(template))
   }

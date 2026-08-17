@@ -1,11 +1,18 @@
 import type { ShellExecSpec } from '@deepseek-ai/dsh-shell'
+import { SandboxUnavailableError } from '@deepseek-ai/dsh-sandbox'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   adaptWindowsAclExecution,
   desktopWindowsPwshConfig,
   desktopWindowsPwshPath,
+  enhanceSandboxUnavailableWithVolumeDiagnosis,
   type WindowsAclAdaptation,
 } from '../src/windows-pwsh-sandbox.ts'
+
+vi.mock('../src/windows-volume-diagnostics.ts', () => ({
+  diagnoseWindowsVolumes: vi.fn(() => []),
+  formatWindowsVolumeConcern: vi.fn((concern: { reason: string }) => concern.reason),
+}))
 
 const RUN_AS_NODE = 'ELECTRON_RUN_AS_NODE'
 
@@ -222,5 +229,41 @@ describe('Windows ACL runner trampoline', () => {
     expect(stderr).toHaveBeenCalledWith(expect.stringContaining(
       'windows-acl-run: desktop trampoline: desktop trampoline received an unexpected ACL runner',
     ))
+  })
+})
+
+describe('Windows ACL sandbox volume diagnosis', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('returns the original error when no volume concern applies', async () => {
+    const { diagnoseWindowsVolumes } = await import('../src/windows-volume-diagnostics.ts')
+    vi.mocked(diagnoseWindowsVolumes).mockReturnValue([])
+    const error = new SandboxUnavailableError('read-only', 'runner refused')
+    const enhanced = enhanceSandboxUnavailableWithVolumeDiagnosis(error, 'C:\\workspace')
+
+    expect(enhanced).toBe(error)
+  })
+
+  it('appends the volume cause when the working directory volume is unsupported', async () => {
+    const { diagnoseWindowsVolumes } = await import('../src/windows-volume-diagnostics.ts')
+    vi.mocked(diagnoseWindowsVolumes).mockReturnValue([{
+      label: 'command working directory',
+      path: 'D:\\workspace',
+      root: 'D:\\',
+      reason: 'FAT32 does not provide the NTFS-style ACL and junction behavior DeepSeek Harness Desktop relies on',
+    }])
+    const error = new SandboxUnavailableError('read-only', 'runner refused')
+
+    const enhanced = enhanceSandboxUnavailableWithVolumeDiagnosis(error, 'D:\\workspace')
+
+    expect(enhanced).not.toBe(error)
+    expect(enhanced).toBeInstanceOf(SandboxUnavailableError)
+    expect(enhanced.message).toContain('runner refused')
+    expect(enhanced.message).toContain('FAT32 does not provide the NTFS-style ACL')
+    expect(vi.mocked(diagnoseWindowsVolumes)).toHaveBeenCalledWith('win32', [
+      { label: 'command working directory', path: 'D:\\workspace' },
+    ])
   })
 })

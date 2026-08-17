@@ -16,6 +16,7 @@ import {
   type DesktopSettings,
 } from '../src/index.ts'
 import type { DesktopRuntime, DesktopShellSpec } from '../src/runtime.ts'
+import { trayLabels } from '../src/tray-labels.ts'
 import { RENDERER_BOOT_REPORT_PATH, type RendererBootReport } from '../src/renderer-boot-contract.ts'
 
 const config: DesktopConfig = {
@@ -53,6 +54,7 @@ function createHarness(platform: DesktopRuntime['platform'] = 'darwin'): PluginH
   let themePreference: ThemePreference = 'system'
   const runtime: DesktopRuntime = {
     platform,
+    labels: trayLabels('en-US'),
     updates: {
       isPackaged: false,
       canDownload: platform === 'darwin' || platform === 'win32',

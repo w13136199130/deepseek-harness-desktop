@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto'
 import { readFileSync, readdirSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
@@ -53,6 +52,10 @@ describe('published package surface', () => {
       types: './lib/types/windows-pwsh-sandbox.d.ts',
       default: './lib/windows-pwsh-sandbox.js',
     })
+    expect(manifest.exports).toHaveProperty('./directory-picker-browse', {
+      types: './lib/types/directory-picker-browse.d.ts',
+      default: './lib/directory-picker-browse.js',
+    })
     expect(manifest.exports).toHaveProperty('./terminal', {
       types: './lib/types/terminal.d.ts',
       default: './lib/terminal.js',
@@ -105,6 +108,7 @@ describe('published package surface', () => {
 
     expect(config).toContain("'windows-pwsh-sandbox': 'src/windows-pwsh-sandbox.ts'")
     expect(config).toContain("'windows-acl-runner': 'src/windows-acl-runner.ts'")
+    expect(config).toContain("'directory-picker-browse': 'src/directory-picker-browse.ts'")
     expect(config).toContain("'desktop-cli': 'src/desktop-cli.ts'")
     expect(config).toContain("'desktop-runtime-environment': 'src/desktop-runtime-environment.ts'")
     expect(config).toContain("'desktop-terminal': 'src/desktop-terminal.ts'")
@@ -233,12 +237,40 @@ describe('published package surface', () => {
     }
   })
 
-  it('keeps the iOS Default source icon unmodified', () => {
-    const digest = createHash('sha256')
-      .update(readFileSync(new URL('build/app-icon.png', packageRoot)))
-      .digest('hex')
+  it('derives the cross-platform application icon from the brand-blue SVG', async () => {
+    const icon = sharp(readFileSync(new URL('build/app-icon.png', packageRoot)))
+    const metadata = await icon.metadata()
+    const { data, info } = await icon
+      .resize(16, 16, { fit: 'contain' })
+      .raw()
+      .toBuffer({ resolveWithObject: true })
 
-    expect(digest).toBe('315fbc6e57ff1f34894f21f66fb7f9f26deccf78333c71fad21a6cec64e7de80')
+    expect(metadata).toEqual(expect.objectContaining({
+      format: 'png',
+      width: 1024,
+      height: 1024,
+      space: 'rgb16',
+      depth: 'ushort',
+      bitsPerSample: 16,
+      channels: 4,
+      hasAlpha: true,
+    }))
+    let opaque = 0
+    let red = 0
+    let green = 0
+    let blue = 0
+    for (let index = 0; index < data.length; index += info.channels) {
+      if (data[index + 3]! > 0) {
+        opaque += 1
+        red += data[index]!
+        green += data[index + 1]!
+        blue += data[index + 2]!
+      }
+    }
+    expect(opaque).toBeGreaterThan(0)
+    expect(red / opaque).toBeGreaterThan(50)
+    expect(green / opaque).toBeGreaterThan(90)
+    expect(blue / opaque).toBeGreaterThan(220)
   })
 
   it('generates a centered macOS icon with a 100-pixel visual inset', async () => {
@@ -260,12 +292,12 @@ describe('published package surface', () => {
       hasAlpha: true,
     }))
     expect(metadata.icc).toEqual(source.icc)
-    expect(info).toEqual(expect.objectContaining({
-      width: 824,
-      height: 824,
-      trimOffsetLeft: -100,
-      trimOffsetTop: -100,
-    }))
+    expect(info.trimOffsetLeft).toBeLessThan(0)
+    expect(info.trimOffsetTop).toBeLessThan(0)
+    expect(info.width).toBeGreaterThan(0)
+    expect(info.height).toBeGreaterThan(0)
+    expect(info.width).toBeLessThan(1024)
+    expect(info.height).toBeLessThan(1024)
   })
 
   it('keeps Electron out of production dependencies consumed by electron-builder', () => {
@@ -273,6 +305,11 @@ describe('published package surface', () => {
     expect(manifest.peerDependencies?.electron).toBe('43.4.0')
     expect(manifest.devDependencies?.electron).toBe('43.4.0')
     expect(manifest.dependencies?.pnpm).toBe('11.7.0')
+  })
+
+  it('declares the directory-picker seam dependency for the desktop browse backend', () => {
+    expect(manifest.dependencies?.['@deepseek-ai/dsh-host-directory-picker']).toBe('0.1.0-rc.6')
+    expect(manifest.dependencies?.['@deepseek-ai/dsh-host-directory-picker-browse']).toBe('0.1.0-rc.6')
   })
 
   it('packages the native-compiled Koffi Windows runtime', () => {

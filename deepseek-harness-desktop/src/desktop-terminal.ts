@@ -595,16 +595,22 @@ function resolveWindowsShell(
 ): ResolvedWindowsShell {
   const exists = options.windowsExecutableExists ?? existsSync
   const resolveExecutable = options.windowsExecutableResolver ?? defaultWindowsExecutableResolver
+  const attempted: string[] = []
   for (const command of WINDOWS_SHELL_COMMANDS) {
     const executable = resolveExecutable(command, environment, exists)
-    if (executable === undefined) continue
+    if (executable === undefined) {
+      attempted.push(command)
+      continue
+    }
     assertScriptValue(`${command} executable`, executable)
     return {
       kind: command === 'cmd.exe' ? 'cmd' : 'powershell',
       executable,
     }
   }
-  throw new Error('deepseek-harness-desktop: terminal requires pwsh.exe, powershell.exe, or cmd.exe on Windows')
+  throw new Error(
+    `deepseek-harness-desktop: terminal requires pwsh.exe, powershell.exe, or cmd.exe on Windows; none resolved under SystemRoot=${windowsEnvironmentValue(environment, 'SystemRoot') ?? 'unset'} (attempted: ${attempted.join(', ')})`,
+  )
 }
 
 /** Convert one selected Windows shell into an argv-only launch. */

@@ -218,11 +218,14 @@ export function apply(ctx: Context, config: Config): void {
     const registration = ctx.desktopRuntime.registerTrayItem({
       group: 'status',
       order: 10,
-      label: () => downloadingVersion === undefined
-        ? availableVersion === undefined
-          ? checking ? 'Checking for Updates…' : 'Check for Updates…'
-          : `DeepSeek Harness Desktop ${availableVersion} Available`
-        : `Downloading DeepSeek Harness Desktop ${downloadingVersion}…`,
+      label: () => {
+        const labels = ctx.desktopRuntime.labels
+        return downloadingVersion === undefined
+          ? availableVersion === undefined
+            ? checking ? labels.checkingForUpdates : labels.checkForUpdates
+            : labels.updateAvailable(availableVersion)
+          : labels.downloading(downloadingVersion)
+      },
       invoke: runManualCheck,
     })
     refreshTray = registration.refresh

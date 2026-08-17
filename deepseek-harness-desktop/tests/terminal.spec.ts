@@ -1,16 +1,21 @@
 import type { Context } from '@deepseek-ai/cordis'
 import { describe, expect, it, vi } from 'vitest'
 import type { DesktopRuntime, DesktopTrayItem } from '../src/runtime.ts'
+import { trayLabels } from '../src/tray-labels.ts'
 import { apply, inject, name } from '../src/terminal.ts'
 
 describe('desktop terminal Host plugin', () => {
-  it('owns an effect-scoped tray command that opens the configured terminal', () => {
+  it.each([
+    ['en-US', 'Open DSH Terminal'],
+    ['zh-CN', '打开 DSH 终端'],
+  ] as const)('owns an effect-scoped tray command that opens the configured terminal (%s)', (locale, label) => {
     let trayItem: DesktopTrayItem | undefined
     let disposeEffect: (() => void) | undefined
     const openTerminal = vi.fn()
     const disposeRegistration = vi.fn()
     const runtime = {
       platform: 'darwin',
+      labels: trayLabels(locale),
       openTerminal,
       registerTrayItem: (item: DesktopTrayItem) => {
         trayItem = item
@@ -30,7 +35,7 @@ describe('desktop terminal Host plugin', () => {
     expect(name).toBe('desktop-terminal')
     expect(inject).toEqual(['desktopRuntime'])
     expect(trayItem).toMatchObject({ group: 'tools', order: 10 })
-    expect(trayItem?.label()).toBe('Open DSH Terminal')
+    expect(trayItem?.label()).toBe(label)
     trayItem?.invoke()
     expect(openTerminal).toHaveBeenCalledOnce()
 
