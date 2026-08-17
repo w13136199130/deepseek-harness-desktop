@@ -15,7 +15,7 @@
 ├── patches/                electron-builder 与 dsh-sandbox-windows-acl 的 Yarn patch
 ├── scripts/verify-layout.mjs  布局与上游一致性门禁（yarn check:layout）
 ├── deepseek-harness/       git submodule —— 官方源码（只读，锁定 commit）
-└── dsh-plugin-desktop/     桌面产品包（Electron 壳 + Cordis 插件行）
+└── deepseek-harness-desktop/     桌面产品包（Electron 壳 + Cordis 插件行）
 ```
 
 ## 快速开始
@@ -36,6 +36,6 @@ corepack yarn dist:mac    # macOS 应用（需在 macOS 上执行）
 
 ## 发布前必改项（当前为占位）
 
-- `dsh-plugin-desktop/package.json` 的 `build.appId`（当前 `com.example.deepseek-harness-desktop`）
-- `dsh-plugin-desktop/src/update-checker.ts` / `update-download.ts` 的更新与下载端点（当前 `updates.example.com` 占位，自动检查默认禁用）
-- 应用图标（`dsh-plugin-desktop/build/`，当前沿用上游参考图标）
+- `deepseek-harness-desktop/package.json` 的 `build.appId`（当前 `com.example.deepseek-harness-desktop`）
+- `deepseek-harness-desktop/src/update-checker.ts` / `update-download.ts` 的更新与下载端点（当前 `updates.example.com` 占位，自动检查默认禁用）
+- 应用图标（`deepseek-harness-desktop/build/`，当前沿用上游参考图标）

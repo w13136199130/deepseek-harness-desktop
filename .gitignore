@@ -12,6 +12,6 @@ node_modules/
 .build/
 .electron-cache/
 
-dsh-plugin-desktop/dist/
-dsh-plugin-desktop/dist-old/
-dsh-plugin-desktop/lib/
+deepseek-harness-desktop/dist/
+deepseek-harness-desktop/dist-old/
+deepseek-harness-desktop/lib/

@@ -1,15 +1,15 @@
 {
-  "name": "deepseek-harness-desktop",
+  "name": "deepseek-harness-desktop-workspace",
   "version": "0.1.0",
   "private": true,
-  "description": "DSH Desktop product workspace: an Electron shell that boots the official DeepSeek Harness",
+  "description": "DeepSeek Harness Desktop product workspace: an Electron shell that boots the official DeepSeek Harness",
   "license": "MIT",
   "packageManager": "yarn@4.18.0",
   "engines": {
     "node": "^22.19.0 || >=24.0.0"
   },
   "workspaces": [
-    "dsh-plugin-desktop"
+    "deepseek-harness-desktop"
   ],
   "resolutions": {
     "app-builder-lib@npm:26.15.3": "patch:app-builder-lib@npm%3A26.15.3#./patches/app-builder-lib@26.15.3.patch",
@@ -45,16 +45,16 @@
     }
   },
   "scripts": {
-    "build": "yarn workspace dsh-plugin-desktop build",
-    "typecheck": "yarn workspace dsh-plugin-desktop typecheck",
-    "test": "yarn workspace dsh-plugin-desktop test",
-    "check": "yarn check:layout && yarn workspace dsh-plugin-desktop check",
+    "build": "yarn workspace deepseek-harness-desktop build",
+    "typecheck": "yarn workspace deepseek-harness-desktop typecheck",
+    "test": "yarn workspace deepseek-harness-desktop test",
+    "check": "yarn check:layout && yarn workspace deepseek-harness-desktop check",
     "check:layout": "node scripts/verify-layout.mjs",
-    "dev": "yarn workspace dsh-plugin-desktop dev",
-    "start": "yarn workspace dsh-plugin-desktop start",
-    "package:dir": "yarn workspace dsh-plugin-desktop package:dir",
-    "dist:win": "yarn workspace dsh-plugin-desktop dist:win",
-    "dist:mac": "yarn workspace dsh-plugin-desktop dist:mac",
+    "dev": "yarn workspace deepseek-harness-desktop dev",
+    "start": "yarn workspace deepseek-harness-desktop start",
+    "package:dir": "yarn workspace deepseek-harness-desktop package:dir",
+    "dist:win": "yarn workspace deepseek-harness-desktop dist:win",
+    "dist:mac": "yarn workspace deepseek-harness-desktop dist:mac",
     "upstream:version": "cd deepseek-harness && corepack pnpm --version",
     "upstream:install": "cd deepseek-harness && corepack pnpm install --frozen-lockfile"
   }

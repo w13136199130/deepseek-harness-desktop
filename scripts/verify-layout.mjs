@@ -13,16 +13,16 @@ const fail = message => { throw new Error(`verify-layout: ${message}`) }
 
 const workspace = readJson('package.json')
 const upstream = readJson('upstream.json')
-const plugin = readJson('dsh-plugin-desktop/package.json')
+const plugin = readJson('deepseek-harness-desktop/package.json')
 const upstreamPackage = readJson('deepseek-harness/package.json')
 
 if (workspace.packageManager !== 'yarn@4.18.0') {
   fail('the product workspace must pin yarn@4.18.0')
 }
-if (JSON.stringify(workspace.workspaces) !== JSON.stringify(['dsh-plugin-desktop'])) {
-  fail('the root Yarn workspace must contain exactly the dsh-plugin-desktop package')
+if (JSON.stringify(workspace.workspaces) !== JSON.stringify(['deepseek-harness-desktop'])) {
+  fail('the root Yarn workspace must contain exactly the deepseek-harness-desktop package')
 }
-if (plugin.packageManager !== undefined) fail('dsh-plugin-desktop must inherit the root Yarn release')
+if (plugin.packageManager !== undefined) fail('deepseek-harness-desktop must inherit the root Yarn release')
 const claudePath = resolve(root, 'CLAUDE.md')
 const claudeStat = lstatSync(claudePath)
 // Windows checkouts materialize the symlink as a regular file holding the
@@ -36,8 +36,8 @@ if (claudeTarget !== 'AGENTS.md') {
 for (const legacyFile of [
   'pnpm-lock.yaml',
   'pnpm-workspace.yaml',
-  'dsh-plugin-desktop/pnpm-lock.yaml',
-  'dsh-plugin-desktop/pnpm-workspace.yaml',
+  'deepseek-harness-desktop/pnpm-lock.yaml',
+  'deepseek-harness-desktop/pnpm-workspace.yaml',
 ]) {
   if (existsSync(resolve(root, legacyFile))) fail(`${legacyFile} must not exist`)
 }

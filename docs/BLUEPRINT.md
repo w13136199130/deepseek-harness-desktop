@@ -24,11 +24,12 @@ DeepSeek Harness Desktop.exe（自包含：Electron + Node 运行时 + pnpm + �
 
 | 项 | 值 | 说明 |
 | --- | --- | --- |
-| 本地目录 | `dsh-desktop/` | 与官方 checkout 目录区分 |
-| GitHub 仓库名 | `deepseek-harness-desktop` | 与产品仓库命名一致（待用户确认） |
+| 本地目录 | 任意（如 `dsh-desktop/`） | 本地 checkout 名与 GitHub 仓库名无关 |
+| GitHub 仓库名 | `deepseek-harness-desktop` | 与产品仓库命名一致 |
 | 产品显示名 | `DeepSeek Harness Desktop` | `build.productName` / `shortcutName` / 窗口与快捷方式；短名 `DSH Desktop` 用于内部称呼 |
-| npm 包名 | `dsh-plugin-desktop` | 内部保留；发布 npm 需改 `@<org>/dsh-desktop` |
-| 二进制 | `dsh-desktop` / `dsh-plugin-desktop` | package.json `bin` |
+| npm 包名 / 目录 | `deepseek-harness-desktop` | workspace 成员目录同名；发布 npm 需改 `@<org>/deepseek-harness-desktop` |
+| 二进制 | `deepseek-harness-desktop`（主）/ `dsh-desktop`（别名） | package.json `bin` |
+| settings 命名空间 | `deepseek-harness-desktop` | DSH home `settings.yaml` 中的 `deepseek-harness-desktop.mode` |
 | 安装包 | `deepseek-harness-desktop-${version}-${arch}-setup.exe` | kebab-case 全小写，URL-safe |
 | appId | `com.example.deepseek-harness-desktop` ⚠️ 占位 | 发布前必须改为你的反向域名 |
 | 更新端点 | `updates.example.com` ⚠️ 占位 | 发布前必须自建端点或改 GitHub Releases |
@@ -36,7 +37,7 @@ DeepSeek Harness Desktop.exe（自包含：Electron + Node 运行时 + pnpm + �
 
 ## 3. 包与依赖
 
-- 根 workspace 仅含 `dsh-plugin-desktop` 一个成员（fabric/market 为参考项目规划目录，已剔除）。
+- 根 workspace 仅含 `deepseek-harness-desktop` 一个成员（fabric/market 为参考项目规划目录，已剔除）。
 - `resolutions`：`app-builder-lib@26.15.3` patch、`@deepseek-ai/dsh-sandbox-windows-acl@0.1.0-rc.6` patch、`koffi@^3.1.0 → 3.1.5`（来自参考项目，必须保留）。
 - `dependenciesMeta.built`：放行 electron / koffi / node-pty / esbuild 等原生包构建（`.yarnrc.yml` 的 `enableScripts: false`）。
 - 运行时 family：`@deepseek-ai/dsh-*@0.1.0-rc.6`（精确版本，与 `upstream.json.runtimePackageVersion` 一致，由 `verify-layout` 强制）。
@@ -45,14 +46,14 @@ DeepSeek Harness Desktop.exe（自包含：Electron + Node 运行时 + pnpm + �
 ## 4. 存放路径
 
 ```
-dsh-desktop/
+dsh-desktop/                    本地 checkout 目录（可任意命名）
 ├── .gitattributes / .gitignore / .yarnrc.yml
 ├── package.json / upstream.json / README.md / AGENTS.md / CLAUDE.md / LICENSE
 ├── patches/                    app-builder-lib + dsh-sandbox-windows-acl patch
 ├── scripts/verify-layout.mjs   布局与上游一致性门禁
 ├── docs/BLUEPRINT.md           本文档
 ├── deepseek-harness/           submodule（gitlink，官方源码只读）
-└── dsh-plugin-desktop/
+└── deepseek-harness-desktop/
     ├── src/                    主进程引导 + 桌面插件行
     │   ├── main.ts             Electron 最小引导（单实例 → boot → 窗口）
     │   ├── profile.ts          官方 dsh-base + dsh-web-app + 桌面行组合
@@ -94,8 +95,8 @@ electron-builder 打包时 `@electron/rebuild` 会把 node-pty 等原生模块�
 2. **Visual Studio 2022 Build Tools**（VC++ 工作负载，node-gyp 编译 C++ 依赖）：
    `winget install Microsoft.VisualStudio.2022.BuildTools -e --override "--quiet --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"`
 
-GitHub Actions 的 `windows-latest` runner 自带以上工具链，CI 出包无需本机安装。`.electron-cache/`（Electron 二进制缓存）与 `dsh-plugin-desktop/dist/`、`lib/` 均已被 .gitignore 排除。
+GitHub Actions 的 `windows-latest` runner 自带以上工具链，CI 出包无需本机安装。`.electron-cache/`（Electron 二进制缓存）与 `deepseek-harness-desktop/dist/`、`lib/` 均已被 .gitignore 排除。
 
 **node-pty Spectre patch**：node-pty 1.1.0 在 `binding.gyp` 中硬编码 `SpectreMitigation: 'Spectre'`，要求 VS 2022 的 Spectre 缓解库组件（不属于 VCTools 推荐集）。本仓库通过 `patches/node-pty@1.1.0.patch`（Yarn patch，见根 `package.json` resolutions）移除该设置，使 Electron ABI 重编在任何 Windows 主机/CI 上都能完成。
 
-**Electron 下载镜像（已固化）**：`dsh-plugin-desktop/package.json` 的 `build.electronDownload.mirror` 指向 `https://npmmirror.com/mirrors/electron/`，避免直连 GitHub 超时；本机用户环境变量 `ELECTRON_MIRROR` / `ELECTRON_BUILDER_BINARIES_MIRROR` 也已通过 `setx` 固化。CI 如需回退 GitHub 官方源，设置 `ELECTRON_MIRROR=`（空）即可覆盖。下载缓存位于 `%LOCALAPPDATA%\electron\Cache`（已有完整 zip 时跳过下载）。
+**Electron 下载镜像（已固化）**：`deepseek-harness-desktop/package.json` 的 `build.electronDownload.mirror` 指向 `https://npmmirror.com/mirrors/electron/`，避免直连 GitHub 超时；本机用户环境变量 `ELECTRON_MIRROR` / `ELECTRON_BUILDER_BINARIES_MIRROR` 也已通过 `setx` 固化。CI 如需回退 GitHub 官方源，设置 `ELECTRON_MIRROR=`（空）即可覆盖。下载缓存位于 `%LOCALAPPDATA%\electron\Cache`（已有完整 zip 时跳过下载）。

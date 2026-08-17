@@ -1,0 +1,27 @@
+# Desktop Host operations compose around the existing Web bundle. Compatibility
+# mode keeps upstream ownership of the browser carrier and rendered UI.
+- insert:
+    - id: desktop-shell
+      name: deepseek-harness-desktop
+      config:
+        mode: compatibility
+    - id: desktop-terminal
+      name: deepseek-harness-desktop/terminal
+      disabled: !!js process.platform === 'linux'
+    - id: desktop-pnpm
+      name: deepseek-harness-desktop/pnpm
+    - id: desktop-profiles
+      name: deepseek-harness-desktop/profiles
+    # Update checks stay disabled until the product update endpoint exists
+    # (see src/update-checker.ts DESKTOP_VERSION_ENDPOINT).
+    - id: desktop-updates
+      name: deepseek-harness-desktop/updates
+      config:
+        enabled: false
+
+# A desktop launch has no terminal operator waiting for the Web readiness line.
+- id: web-runtime
+  config:
+    printUrl: false
+    surfaceContext: true
+    trustedHosts: []
