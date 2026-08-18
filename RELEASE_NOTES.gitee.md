@@ -52,6 +52,12 @@
 
 > 高级模式暂不支持 Linux；Linux 仅兼容模式。
 
+## 下载说明（重要）
+
+> Gitee 发行版附件有 100MB 大小限制，无法直接承载安装包（Windows 安装包约 188MB，macOS 包约 172MB）。
+> 请从 **GitHub Release** 下载安装包：https://github.com/w13136199130/deepseek-harness-desktop/releases/latest
+> 本发行版保留标签与发布说明，作为 Gitee 用户入口。
+
 ## 常见问题
 
 - Windows 提示 "Unknown publisher" / SmartScreen：产物未签名，属预期行为，点击「更多信息 → 仍要运行」继续。
