@@ -8,10 +8,19 @@
 
 ## 下载
 
-| 平台 | 安装包 | 说明 |
-| --- | --- | --- |
-| Windows x64 | deepseek-harness-desktop-0.1.0-x64-setup.exe | NSIS 安装程序，支持自定义安装目录、开始菜单与桌面快捷方式 |
-| macOS | deepseek-harness-desktop-mac-x64-unsigned.zip | 未签名应用包，解压后拖入 Applications 使用 |
+请按你的操作系统选择对应的安装包（同一 Release 下的两个附件分别对应 Windows 与 macOS）：
+
+### Windows x64
+
+- 安装包：deepseek-harness-desktop-0.1.0-x64-setup.exe
+- 说明：NSIS 安装程序，支持自定义安装目录、开始菜单与桌面快捷方式。
+- 安装：下载后直接运行，按提示完成安装；首次启动自动创建默认 desktop profile。
+
+### macOS（x64）
+
+- 应用包：deepseek-harness-desktop-mac-x64-unsigned.zip
+- 说明：未签名应用包，解压后拖入 Applications 使用。
+- 安装：解压后将 DeepSeek Harness Desktop.app 拖入 Applications；首次打开需在「系统设置 → 隐私与安全性」中点击「仍要打开」。
 
 > 未签名说明：本版本产物未签名。Windows 安装时可能显示 "Unknown publisher" 或 SmartScreen 警告（点击「更多信息 → 仍要运行」即可）；macOS 首次打开需在「系统设置 → 隐私与安全性」中允许。正式签名与公证是后续独立发布门禁。
 

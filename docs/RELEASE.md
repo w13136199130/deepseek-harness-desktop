@@ -97,6 +97,7 @@ README 下载表目前只指向 GitHub Releases。若希望 Gitee 用户也能�
 | 推送 tag 后 Actions 没有运行 | tag 名不是 `v*` 开头（如 `0.1.0` 而非 `v0.1.0`）；删除并重新打正确的 tag |
 | tag 推到 Gitee 后 Actions 报错 | Gitee 不运行 GitHub Actions，属正常现象；GitHub 侧成功即可 |
 | Release 创建失败：找不到产物 | 某个 job 构建失败；查看 Actions 日志定位（常见：`dist:win` 的 gate、macOS `package:dir`、产物名不匹配 glob） |
+| macOS job 一直排队不执行 | GitHub 已下线 `macos-13` runner 镜像（2025-12-08 移除），workflow 必须使用 `macos-15-intel`（x64）等仍在维护的 runner；检查 `.github/workflows/release.yml` 的 `runs-on` |
 | Release Notes 为空或与仓库不符 | 确认 `RELEASE_NOTES.md` 已提交并推送，且 workflow 中 `softprops/action-gh-release` 带 `body_path: RELEASE_NOTES.md`（已在仓库内配置） |
 | Gitee 附件上传超限 | Gitee 发行版附件上限 100MB，安装包无法上传；在发行版描述中提供 GitHub 下载链接（已在 `RELEASE_NOTES.gitee.md` 中处理） |
 | Gitee body is invalid | body 含 markdown 反引号会被拒绝；使用 `RELEASE_NOTES.gitee.md` 并以 `application/x-www-form-urlencoded` 方式提交 |
