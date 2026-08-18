@@ -37,6 +37,15 @@ Current release artifacts support Windows x64 and macOS. Ordinary users do not n
 - **Update checks**: built-in product update endpoint (currently a placeholder; enabled after deployment).
 - **Windows security sandbox**: PowerShell execution keeps the upstream ACL restricted-token sandbox, fail-closed, with no unrestricted fallback.
 
+## Screenshots
+
+The official DSH Web interface appears unchanged in the desktop window: the session list and workspace on the left, the conversation and agent trace in the middle, and the settings panel on the right. The screenshots below show the running app:
+
+<p align="center">
+  <img src="docs/screenshots/conversation.png" alt="Conversation view" width="49%">
+  <img src="docs/screenshots/settings.png" alt="Settings panel" width="49%">
+</p>
+
 ## Architecture
 
 The desktop app is a thin Electron host: it boots the official DSH Host in the Electron main process, the Host serves the official Web UI over loopback HTTP/WebSocket, and Electron loads the same-origin page in a sandboxed renderer — no Electron-owned plugin roster, preload bridge, or raw Electron API in the renderer.

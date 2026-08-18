@@ -37,6 +37,15 @@ DSH Desktop 把 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harne
 - **更新检查**：内置产品更新端点（当前为占位，部署后启用）。
 - **Windows 安全沙箱**：PowerShell 执行保持上游 ACL 受限令牌沙箱，fail-closed，不自动降权。
 
+## 界面预览
+
+官方 DSH Web 界面在桌面窗口中原样呈现：左侧为会话列表与工作区，中间为对话与智能体运行轨迹，右侧为设置面板。以下为运行效果：
+
+<p align="center">
+  <img src="docs/screenshots/conversation.png" alt="对话界面" width="49%">
+  <img src="docs/screenshots/settings.png" alt="设置面板" width="49%">
+</p>
+
 ## 架构设计
 
 桌面应用是一个薄的 Electron 宿主：在 Electron main 进程中启动官方 DSH Host，Host 通过 loopback HTTP/WebSocket 提供官方 Web UI，Electron 在沙箱 renderer 中加载同源页面——没有 Electron 自有插件 roster、preload bridge 或渲染进程 Electron API。
