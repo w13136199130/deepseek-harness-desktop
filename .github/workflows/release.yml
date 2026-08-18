@@ -19,7 +19,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: yarn
       - name: Install dependencies
         run: corepack yarn install --immutable
       - name: Build and package Windows installer
@@ -41,7 +40,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: yarn
       - name: Install dependencies
         run: corepack yarn install --immutable
       - name: Build unpacked macOS application
