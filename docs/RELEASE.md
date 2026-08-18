@@ -16,14 +16,16 @@ DeepSeek Harness Desktop 同时在 **GitHub（主仓库）** 与 **Gitee（镜�
 - **GitHub**：`.github/workflows/release.yml` 监听 `v*` 标签推送。触发后并行运行两个 job：
   - `windows`：`yarn dist:win` 构建 NSIS 安装包 `deepseek-harness-desktop-<version>-x64-setup.exe`；
   - `macos`：`package:dir` 构建未签名 .app 并压缩为 `deepseek-harness-desktop-mac-x64-unsigned.zip`；
-  - 两者都通过 `softprops/action-gh-release` 上传到该 tag 的 GitHub Release，并带 `generate_release_notes: true` 自动生成发布说明。
+  - 两者都通过 `softprops/action-gh-release` 上传到该 tag 的 GitHub Release，并以 `body_path` 引用仓库根目录的 **`RELEASE_NOTES.md`** 作为发布说明（Release Notes）。
 - **Gitee**：镜像仓库**不会**自动同步 GitHub 的 Release 产物，需在 Gitee 网页手动创建「发行版」。
+
+> **发布说明单一事实源**：`RELEASE_NOTES.md` 是发布说明（描述）的唯一来源。每次发布前必须更新其中的版本号、下载表与内容；GitHub Release 会自动使用它，Gitee 手动创建时复制同一份文本。
 
 ## 首次发布步骤（例如 v0.1.0）
 
 ### 1. 提交发布前代码
 
-确认工作树干净，`yarn check` 通过（含布局门禁与全量验证），并把 `.github/workflows/release.yml` 等改动提交推送到 GitHub `main`：
+确认工作树干净，`yarn check` 通过（含布局门禁与全量验证）。**更新 `RELEASE_NOTES.md`**（版本号、下载表、功能说明），并把 `.github/workflows/release.yml`、`RELEASE_NOTES.md`、`docs/RELEASE.md` 等改动提交推送到 GitHub `main`：
 
 ```sh
 git push origin main
@@ -51,7 +53,7 @@ git push origin v0.1.0
 
 - `deepseek-harness-desktop-0.1.0-x64-setup.exe`（Windows x64 安装程序）
 - `deepseek-harness-desktop-mac-x64-unsigned.zip`（macOS 未签名应用）
-- 自动生成的 Release Notes（描述）
+- 自动使用 `RELEASE_NOTES.md` 作为发布说明（描述）
 
 README 中「下载与安装」表格指向的 `/releases/latest` 链接此时即可用，徽章（release 版本、下载数）也会自动点亮。
 
@@ -84,7 +86,7 @@ README 下载表目前只指向 GitHub Releases。若希望 Gitee 用户也能�
 | 推送 tag 后 Actions 没有运行 | tag 名不是 `v*` 开头（如 `0.1.0` 而非 `v0.1.0`）；删除并重新打正确的 tag |
 | tag 推到 Gitee 后 Actions 报错 | Gitee 不运行 GitHub Actions，属正常现象；GitHub 侧成功即可 |
 | Release 创建失败：找不到产物 | 某个 job 构建失败；查看 Actions 日志定位（常见：`dist:win` 的 gate、macOS `package:dir`、产物名不匹配 glob） |
-| Release Notes 为空 | 确认 workflow 中 `softprops/action-gh-release` 带 `generate_release_notes: true`（已在仓库内配置） |
+| Release Notes 为空或与仓库不符 | 确认 `RELEASE_NOTES.md` 已提交并推送，且 workflow 中 `softprops/action-gh-release` 带 `body_path: RELEASE_NOTES.md`（已在仓库内配置） |
 | Gitee 附件上传超限 | 在 Gitee 发行版描述中提供 GitHub 下载链接，或分卷/外链 |
 | 未签名警告 | Windows 安装包默认未签名（SmartScreen / Unknown publisher），macOS 应用未公证；正式签名与公证是独立发布门禁，见 `deepseek-harness-desktop/README.md` 与 `docs/BLUEPRINT.md` |
 
